@@ -1,10 +1,13 @@
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "./AuthContext";
 
 export function Navigation() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const links = [
@@ -57,6 +60,42 @@ export function Navigation() {
             ))}
           </div>
 
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center gap-3">
+            {user ? (
+              <>
+                <div className="flex items-center gap-2 px-4 py-2 border border-border">
+                  <User size={16} className="text-primary" />
+                  <span className="font-display tracking-wider text-sm">
+                    {user.fullName.toUpperCase()}
+                  </span>
+                </div>
+                <button
+                  onClick={() => { signOut(); navigate("/"); }}
+                  className="font-display tracking-wider text-sm opacity-70 hover:opacity-100 transition-opacity px-4 py-2 border border-border hover:border-destructive hover:text-destructive flex items-center gap-2"
+                >
+                  <LogOut size={14} />
+                  SIGN OUT
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/signin"
+                  className="font-display tracking-wider text-sm opacity-70 hover:opacity-100 transition-opacity px-4 py-2 border border-border hover:border-primary"
+                >
+                  SIGN IN
+                </Link>
+                <Link
+                  to="/signup"
+                  className="font-display tracking-wider text-sm bg-primary text-primary-foreground px-4 py-2 hover:bg-primary/90 transition-colors"
+                >
+                  SIGN UP
+                </Link>
+              </>
+            )}
+          </div>
+
           {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 hover:bg-muted transition-colors"
@@ -89,6 +128,41 @@ export function Navigation() {
                   )}
                 </Link>
               ))}
+              <div className="pt-4 mt-4 border-t border-border flex gap-3">
+                {user ? (
+                  <>
+                    <div className="flex-1 flex items-center justify-center gap-2 py-2 border border-border">
+                      <User size={16} className="text-primary" />
+                      <span className="font-display tracking-wider text-sm">
+                        {user.fullName.toUpperCase()}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => { signOut(); navigate("/"); setMobileMenuOpen(false); }}
+                      className="flex-1 text-center font-display tracking-wider text-sm py-2 border border-border hover:border-destructive hover:text-destructive transition-colors"
+                    >
+                      SIGN OUT
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/signin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex-1 text-center font-display tracking-wider text-sm py-2 border border-border hover:border-primary transition-colors"
+                    >
+                      SIGN IN
+                    </Link>
+                    <Link
+                      to="/signup"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex-1 text-center font-display tracking-wider text-sm py-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                    >
+                      SIGN UP
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
